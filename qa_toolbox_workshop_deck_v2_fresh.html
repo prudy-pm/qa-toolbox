@@ -1,0 +1,536 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>AI-Augmented QA Toolbox</title>
+<style>
+@import url("https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap");
+:root{--dark:#0d1117;--panel:#161b22;--card:#1c2330;--border:#30363d;--accent:#2563eb;--a2:#3b82f6;--teal:#0ea5e9;--green:#22c55e;--amber:#f59e0b;--red:#ef4444;--purple:#a855f7;--pink:#ec4899;--t1:#f0f6fc;--t2:#8b949e;--t3:#484f58}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:"Inter",sans-serif;background:var(--dark);color:var(--t1);overflow:hidden;height:100vh;width:100vw}
+.deck{width:100%;height:100vh;position:relative}.slide{position:absolute;inset:0;display:none;flex-direction:column;padding:34px 46px 72px;overflow:hidden}.slide.active{display:flex}
+.hdr{display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;flex-shrink:0}.brand{display:flex;align-items:center;gap:10px}.blogo{width:28px;height:28px;background:linear-gradient(135deg,var(--accent),var(--teal));border-radius:7px;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:11px;color:#fff}.btxt{font-size:11px;color:var(--t2);font-weight:500}.btxt span{color:var(--t1);font-weight:700}.snum{font-size:10px;color:var(--t3)}
+.stitle{font-size:24px;font-weight:800;line-height:1.2;margin-bottom:4px}.ssub{font-size:12px;color:var(--t2);margin-bottom:12px}.aline{height:2px;border-radius:2px;margin-bottom:12px;background:linear-gradient(90deg,var(--accent),var(--teal),transparent);flex-shrink:0}.sbody{flex:1;display:flex;flex-direction:column;overflow:hidden}
+.hero{display:flex;flex-direction:column;justify-content:center;gap:14px;flex:1}.eyebrow{font-size:11px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--a2)}.divider{width:56px;height:3px;background:linear-gradient(90deg,var(--accent),var(--teal));border-radius:2px}.hero-title{font-size:50px;font-weight:900;line-height:1.04;background:linear-gradient(135deg,#f0f6fc 0%,var(--teal) 60%,var(--a2) 100%);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}.hero-sub{font-size:16px;color:var(--t2);max-width:640px;line-height:1.55}
+.tags{display:flex;gap:6px;flex-wrap:wrap}.tag{padding:4px 10px;border-radius:20px;font-size:10px;font-weight:600;border:1px solid}.tb{background:rgba(37,99,235,.15);border-color:rgba(37,99,235,.35);color:var(--a2)}.tt{background:rgba(14,165,233,.15);border-color:rgba(14,165,233,.35);color:var(--teal)}.tg{background:rgba(34,197,94,.15);border-color:rgba(34,197,94,.35);color:var(--green)}.ta{background:rgba(245,158,11,.15);border-color:rgba(245,158,11,.35);color:var(--amber)}.tp{background:rgba(168,85,247,.15);border-color:rgba(168,85,247,.35);color:var(--purple)}.tr{background:rgba(239,68,68,.15);border-color:rgba(239,68,68,.35);color:var(--red)}.tpk{background:rgba(236,72,153,.15);border-color:rgba(236,72,153,.35);color:var(--pink)}
+.cards{display:grid;gap:12px;flex:1}.c2{grid-template-columns:1fr 1fr}.c3{grid-template-columns:1fr 1fr 1fr}.card{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:16px;display:flex;flex-direction:column;gap:8px;overflow:hidden}.cico{font-size:20px}.ctit{font-size:12.5px;font-weight:700}.cbod{font-size:11px;color:var(--t2);line-height:1.55}.cbod ul{padding-left:18px;display:flex;flex-direction:column;gap:5px}
+.tcol{display:grid;grid-template-columns:1fr 1fr;gap:14px;flex:1}.bl{list-style:none;display:flex;flex-direction:column;gap:8px}.bl li{display:flex;align-items:flex-start;gap:8px;font-size:11.5px;color:var(--t2);line-height:1.5}.dot{width:6px;height:6px;border-radius:50%;margin-top:6px;flex-shrink:0}.chk{display:flex;flex-direction:column;gap:7px}.chi{display:flex;align-items:flex-start;gap:8px;padding:8px 10px;background:var(--card);border:1px solid var(--border);border-radius:8px}.chico{font-size:12px;flex-shrink:0}.chtxt{font-size:11px;color:var(--t2);line-height:1.5}.chtxt strong,.bl strong,.ibox strong,.gbox strong,.wbox strong,.rbox strong{color:var(--t1)}
+.ibox,.gbox,.wbox,.rbox{border-radius:8px;padding:10px 12px;font-size:11px;line-height:1.55}.ibox{background:rgba(37,99,235,.08);border:1px solid rgba(37,99,235,.25);border-left:3px solid var(--a2);color:var(--t2)}.gbox{background:rgba(34,197,94,.08);border:1px solid rgba(34,197,94,.25);border-left:3px solid var(--green);color:var(--t2)}.wbox{background:rgba(245,158,11,.08);border:1px solid rgba(245,158,11,.25);border-left:3px solid var(--amber);color:var(--t2)}.rbox{background:rgba(239,68,68,.08);border:1px solid rgba(239,68,68,.25);border-left:3px solid var(--red);color:var(--t2)}
+.ft{width:100%;border-collapse:collapse;font-size:10.5px}.ft th{text-align:left;padding:7px 9px;background:var(--panel);color:var(--t2);font-size:9.5px;text-transform:uppercase;letter-spacing:.5px;border-bottom:1px solid var(--border)}.ft td{padding:7px 9px;border-bottom:1px solid var(--border);color:var(--t2);vertical-align:top;line-height:1.45}.ft td:first-child{color:var(--t1);font-weight:600}.ft tr:last-child td{border-bottom:none}
+.code{background:var(--panel);border:1px solid var(--border);border-radius:10px;padding:12px 14px;overflow:auto;flex:1}.code pre{font-family:"Courier New",monospace;font-size:10.5px;line-height:1.6;color:#79c0ff;white-space:pre-wrap}
+.tri{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;flex:1}.tri-col{border-radius:12px;padding:16px;border:1px solid}.tri-col h3{font-size:13px;margin-bottom:8px}.tri-col.green{background:rgba(34,197,94,.06);border-color:rgba(34,197,94,.25)}.tri-col.amber{background:rgba(245,158,11,.06);border-color:rgba(245,158,11,.25)}.tri-col.purple{background:rgba(168,85,247,.06);border-color:rgba(168,85,247,.25)}
+.nav{position:fixed;bottom:18px;left:50%;transform:translateX(-50%);display:flex;align-items:center;gap:8px;background:var(--panel);border:1px solid var(--border);border-radius:40px;padding:6px 15px;z-index:100}.nbtn{background:none;border:none;color:var(--t2);cursor:pointer;font-size:14px;padding:3px 7px;border-radius:5px}.nbtn:hover{background:var(--border);color:var(--t1)}.nbtn:disabled{opacity:.3;cursor:default}.ndots{display:flex;gap:4px;align-items:center}.ndot{width:4px;height:4px;border-radius:50%;background:var(--border);cursor:pointer;transition:all .2s}.ndot.active{background:var(--a2);width:12px;border-radius:3px}.kh{position:fixed;bottom:18px;right:24px;font-size:10px;color:var(--t3)}.kh kbd{background:var(--panel);border:1px solid var(--border);border-radius:3px;padding:1px 4px;font-size:9px}.prog{position:fixed;top:0;left:0;height:2px;background:linear-gradient(90deg,var(--accent),var(--teal));transition:width .3s ease;z-index:200}
+@media (max-width: 1100px){.cards.c3,.tri,.tcol{grid-template-columns:1fr}.slide{padding:24px 28px 72px}}
+</style>
+</head>
+<body>
+<div class="prog" id="prog"></div>
+<div class="deck" id="deck"><div class="slide" data-label="Title">
+      <div class="hdr"><div class="brand"><div class="blogo">BSC</div><div class="btxt"><span>Transaction Science</span> · BSC Global</div></div><div class="snum"></div></div>
+      <div class="sbody">
+        <div class="stitle">AI-Augmented QA Toolbox</div>
+        <div class="ssub">A practical workshop deck for QA engineers applying automation, AI, and structured quality gates on real projects.</div>
+        <div class="aline"></div>
+        <div class="hero">
+         <div class="eyebrow">Quality Engineering Workshop</div>
+         <div class="divider"></div>
+         <div class="hero-title">AI-Augmented<br/>QA Toolbox</div>
+         <div class="hero-sub">Built from reusable learnings across two anonymised projects. Focused on doing, not just understanding.</div>
+         <div class="tags">
+           <span class="tag tb">QA Toolbox</span>
+           <span class="tag tt">Playwright</span>
+           <span class="tag ta">Azure DevOps</span>
+           <span class="tag tp">MCP</span>
+           <span class="tag tg">Claude Code</span>
+           <span class="tag tr">Practical Artefacts</span>
+         </div>
+       </div>
+      </div>
+    </div><div class="slide" data-label="Use This Deck">
+      <div class="hdr"><div class="brand"><div class="blogo">BSC</div><div class="btxt"><span>Transaction Science</span> · BSC Global</div></div><div class="snum"></div></div>
+      <div class="sbody">
+        <div class="stitle">How to Use This Deck</div>
+        <div class="ssub">This is a working deck. Read it like a toolbox, not like a policy document.</div>
+        <div class="aline"></div>
+        <div class="cards c3"><div class="card" >
+              <div class="cico">🧭</div>
+              <div class="ctit">Assess the project</div>
+              <div class="cbod">Use the trust boundary table, layer decision framework, and coverage taxonomy to understand what kind of project you are on.</div>
+            </div><div class="card" >
+              <div class="cico">🛠️</div>
+              <div class="ctit">Build what is needed first</div>
+              <div class="cbod">Use the starter checklist, scaffold, and anti-flake rules to stand up only what the project genuinely needs.</div>
+            </div><div class="card" >
+              <div class="cico">♻️</div>
+              <div class="ctit">Reuse the template, change the answers</div>
+              <div class="cbod">The artefacts stay the same. The project-specific answers change. That is the whole point of a toolbox.</div>
+            </div></div><div class="ibox" style="margin-top:12px;"><strong>Workshop prompt:</strong> Think of your current or next project. As you go, note what already exists, what is missing, and what from this deck you could use immediately.</div>
+      </div>
+    </div><div class="slide" data-label="Governing Rule">
+      <div class="hdr"><div class="brand"><div class="blogo">BSC</div><div class="btxt"><span>Transaction Science</span> · BSC Global</div></div><div class="snum"></div></div>
+      <div class="sbody">
+        <div class="stitle">The Governing Rule</div>
+        <div class="ssub">Default to the lowest layer that can honestly prove the behaviour.</div>
+        <div class="aline"></div>
+        <div class="cards c3"><div class="card" style="border-color:rgba(168,85,247,.3);">
+              <div class="cico">⚙️</div>
+              <div class="ctit">Unit</div>
+              <div class="cbod">Pure logic, in-process, no I/O. Dev-owned. QA asks about it when needed, but does not write it.</div>
+            </div><div class="card" style="border-color:rgba(245,158,11,.3);">
+              <div class="cico">🔗</div>
+              <div class="ctit">Integration</div>
+              <div class="cbod">API contracts, DB writes, events, persistence, state transitions. This is a QA workhorse.</div>
+            </div><div class="card" style="border-color:rgba(239,68,68,.3);">
+              <div class="cico">🌐</div>
+              <div class="ctit">E2E / Automation</div>
+              <div class="cbod">User-visible behaviour, journeys, rendering, auth/session behaviour. Keep this layer thin and deliberate.</div>
+            </div></div><div class="gbox" style="margin-top:12px;"><strong>Rule:</strong> If the browser is not the only honest proof, it probably does not need to be an E2E test.</div><div class="wbox" style="margin-top:10px;">If everything becomes E2E, the browser becomes your therapist and your bottleneck.</div>
+      </div>
+    </div><div class="slide" data-label="QA Boundaries">
+      <div class="hdr"><div class="brand"><div class="blogo">BSC</div><div class="btxt"><span>Transaction Science</span> · BSC Global</div></div><div class="snum"></div></div>
+      <div class="sbody">
+        <div class="stitle">What QA Drives, Influences, and Needs</div>
+        <div class="ssub">Clear boundaries stop work from being absorbed badly or not done at all. This deck describes capability and approach — not automatic ownership of every test type.</div>
+        <div class="aline"></div>
+        <div class="tri"><div class="tri-col green"><h3>QA Drives</h3><ul class="bl"><li><span class="dot" style="background:var(--green)"></span><div><strong>Functional automation strategy</strong> — recognising when E2E, Integration, or smoke coverage is needed and what good looks like</div></li><li><span class="dot" style="background:var(--green)"></span><div><strong>Test case design</strong> — happy path, edge cases, negative paths</div></li><li><span class="dot" style="background:var(--green)"></span><div><strong>Coverage tracking</strong> — Covered / Partial / Pending / Out of Scope</div></li><li><span class="dot" style="background:var(--green)"></span><div><strong>Bug logging and triage</strong> — including AI-assisted workflows</div></li><li><span class="dot" style="background:var(--green)"></span><div><strong>Suite stability</strong> — anti-flake standards, speed tiering, maintenance</div></li></ul></div><div class="tri-col amber"><h3>QA Influences</h3><ul class="bl"><li><span class="dot" style="background:var(--amber)"></span><div><strong>Requirement quality</strong> — can this be tested from what is written?</div></li><li><span class="dot" style="background:var(--amber)"></span><div><strong>PR review conversations</strong> — is the right layer covered?</div></li><li><span class="dot" style="background:var(--amber)"></span><div><strong>Definition of Done</strong> — what quality means before merge or release</div></li><li><span class="dot" style="background:var(--amber)"></span><div><strong>Testability hooks</strong> — <code>data-testid</code>, admin seams, stable selectors</div></li><li><span class="dot" style="background:var(--amber)"></span><div><strong>Unit test coverage conversations</strong> — Dev owns, QA can query</div></li></ul></div><div class="tri-col purple"><h3>Dev Owns / QA Needs</h3><ul class="bl"><li><span class="dot" style="background:var(--purple)"></span><div><strong>Unit tests</strong> — pure logic belongs with Dev</div></li><li><span class="dot" style="background:var(--purple)"></span><div><strong>Code quality</strong> — linting and implementation standards</div></li><li><span class="dot" style="background:var(--purple)"></span><div><strong>Testability hooks</strong> — reliable locators and helper seams in the app</div></li><li><span class="dot" style="background:var(--purple)"></span><div><strong>Bug fixes</strong> — linked back to failing TCs or review findings</div></li><li><span class="dot" style="background:var(--purple)"></span><div><strong>Shared dependency support</strong> where the project requires emulators or stubs that QA must be able to trust</div></li></ul></div></div>
+      </div>
+    </div><div class="slide" data-label="First 60 Minutes">
+      <div class="hdr"><div class="brand"><div class="blogo">BSC</div><div class="btxt"><span>Transaction Science</span> · BSC Global</div></div><div class="snum"></div></div>
+      <div class="sbody">
+        <div class="stitle">The First 60 Minutes on a Project</div>
+        <div class="ssub">The first job is orientation, not automation.</div>
+        <div class="aline"></div>
+        <div class="chk"><div class="chi"><div class="chico">1️⃣</div><div class="chtxt"><strong>Find where requirements live</strong> — wiki, tickets, linked docs, or scattered tribal knowledge</div></div><div class="chi"><div class="chico">2️⃣</div><div class="chtxt"><strong>Identify current delivery artefacts</strong> — existing tests, PR patterns, release cadence, bug history</div></div><div class="chi"><div class="chico">3️⃣</div><div class="chtxt"><strong>Map trust boundaries</strong> — Real / Emulated / Stubbed</div></div><div class="chi"><div class="chico">4️⃣</div><div class="chtxt"><strong>Decide the project shape</strong> — browser-first, integration-heavy, or mixed</div></div><div class="chi"><div class="chico">5️⃣</div><div class="chtxt"><strong>Find the fastest useful quality gate</strong> — not the biggest one, the first useful one</div></div><div class="chi"><div class="chico">6️⃣</div><div class="chtxt"><strong>Resist premature automation</strong> — first understand, then scaffold, then prove one slice</div></div></div>
+      </div>
+    </div><div class="slide" data-label="Trust Boundaries">
+      <div class="hdr"><div class="brand"><div class="blogo">BSC</div><div class="btxt"><span>Transaction Science</span> · BSC Global</div></div><div class="snum"></div></div>
+      <div class="sbody">
+        <div class="stitle">Trust Boundaries — Real / Emulated / Stubbed</div>
+        <div class="ssub">This is one of the fastest ways to stop testing the wrong thing in the wrong environment.</div>
+        <div class="aline"></div>
+        <table class="ft"><thead><tr><th>Component</th><th>Type</th><th>Meaning</th></tr></thead><tbody><tr><td>Frontend / UI</td><td>Real</td><td>Actual application code or services you own and can run as they really behave</td></tr><tr><td>API / Services</td><td>Real</td><td>Actual application code or services you own and can run as they really behave</td></tr><tr><td>Database / Queue / Storage</td><td>Emulated</td><td>Infrastructure or dependencies you rely on that can be run locally with sufficient fidelity</td></tr><tr><td>Email / SMS / Payment / External provider</td><td>Stubbed</td><td>Dependencies you cannot call deterministically or faithfully enough in the main suite</td></tr></tbody></table><div class="ibox" style="margin-top:12px;"><strong>Workshop prompt:</strong> Fill in this table for your current project. If you cannot classify a component, that uncertainty is already telling you something useful.</div>
+      </div>
+    </div><div class="slide" data-label="Shared Dependency Readiness">
+      <div class="hdr"><div class="brand"><div class="blogo">BSC</div><div class="btxt"><span>Transaction Science</span> · BSC Global</div></div><div class="snum"></div></div>
+      <div class="sbody">
+        <div class="stitle">Shared Test Dependency Readiness</div>
+        <div class="ssub">If a project relies on emulated or stubbed dependencies, QA needs more than access — QA needs reliability.</div>
+        <div class="aline"></div>
+        <div class="tcol"><div><table class="ft"><thead><tr><th>Expectation</th><th>Why it matters</th></tr></thead><tbody>
+          <tr><td>Starts reliably</td><td>A strategy cannot depend on something that works inconsistently</td></tr>
+          <tr><td>Can be reset predictably</td><td>Repeatable testing needs a known state</td></tr>
+          <tr><td>Behaviour is documented</td><td>QA needs to know what is real, approximated, or unsupported</td></tr>
+          <tr><td>Failure modes are visible</td><td>Environment problems should not masquerade as product bugs</td></tr>
+          <tr><td>Data can be seeded / controlled</td><td>Repeatable setup depends on this</td></tr>
+          <tr><td>Limits are known</td><td>Unsupported behaviour should not be mistaken for coverage</td></tr>
+        </tbody></table></div><div><div class="ibox"><strong>Practical framing:</strong> another party may provision the emulator or stub, but QA should not quietly rely on it unless readiness expectations are explicit.</div><div style="height:10px"></div><div class="gbox"><strong>Rule:</strong> If a dependency is not test-ready, it should not sit inside the strategy as though it is.</div></div></div>
+      </div>
+    </div><div class="slide" data-label="Decision Framework">
+      <div class="hdr"><div class="brand"><div class="blogo">BSC</div><div class="btxt"><span>Transaction Science</span> · BSC Global</div></div><div class="snum"></div></div>
+      <div class="sbody">
+        <div class="stitle">Test Type Decision Framework</div>
+        <div class="ssub">This is the simplest reusable QA decision in the deck. It helps decide the right approach — not automatic ownership.</div>
+        <div class="aline"></div>
+        <div class="tcol"><div><div class="chk"><div class="chi"><div class="chico">1️⃣</div><div class="chtxt"><strong>Pure logic, no I/O?</strong> → Unit (Dev)</div></div><div class="chi"><div class="chico">2️⃣</div><div class="chtxt"><strong>Crosses a seam between components or infra?</strong> → Integration</div></div><div class="chi"><div class="chico">3️⃣</div><div class="chtxt"><strong>Only honest proof is visible in browser?</strong> → E2E / Automation</div></div><div class="chi"><div class="chico">4️⃣</div><div class="chtxt"><strong>Needs a real un-emulatable dependency?</strong> → Smoke lane or Out of Scope</div></div></div></div><div><table class="ft"><thead><tr><th>Case ID</th><th>Behaviour</th><th>Layer chosen</th><th>Why not lower</th></tr></thead><tbody><tr><td>TC-AUTH-001</td><td>Login redirects correctly</td><td>E2E</td><td>Browser session is the proof</td></tr><tr><td>TC-API-002</td><td>Profile update persists to DB</td><td>Integration</td><td>Crosses API + DB seam</td></tr><tr><td>TC-CALC-003</td><td>Interest calculation</td><td>Unit (Dev)</td><td>Pure logic, no I/O</td></tr></tbody></table></div></div>
+      </div>
+    </div><div class="slide" data-label="Integration vs E2E">
+      <div class="hdr"><div class="brand"><div class="blogo">BSC</div><div class="btxt"><span>Transaction Science</span> · BSC Global</div></div><div class="snum"></div></div>
+      <div class="sbody">
+        <div class="stitle">When to Use Integration vs E2E</div>
+        <div class="ssub">The most practical layer decision QA makes repeatedly. If this coverage needs to exist, this is the best way to approach it.</div>
+        <div class="aline"></div>
+        <div class="cards c2"><div class="card" >
+              <div class="cico">🔗</div>
+              <div class="ctit">Use Integration when you need to prove…</div>
+              <div class="cbod"><ul><li>API contracts</li><li>DB writes / persistence</li><li>message or event flows</li><li>state transitions</li><li>ETL / transformation</li><li>eventual consistency</li></ul></div>
+            </div><div class="card" >
+              <div class="cico">🌐</div>
+              <div class="ctit">Use E2E when you need to prove…</div>
+              <div class="cbod"><ul><li>the user can see it</li><li>the user can do it</li><li>the journey works across pages</li><li>rendering / layout matters</li><li>error / empty states degrade correctly</li><li>browser session behaviour matters</li></ul></div>
+            </div></div><div class="gbox" style="margin-top:12px;"><strong>Rule:</strong> If API state or stored data is enough proof, prove it lower and let the browser prove only what the browser genuinely owns. Ownership of implementation may still vary by team.</div>
+      </div>
+    </div><div class="slide" data-label="Case Studies">
+      <div class="hdr"><div class="brand"><div class="blogo">BSC</div><div class="btxt"><span>Transaction Science</span> · BSC Global</div></div><div class="snum"></div></div>
+      <div class="sbody">
+        <div class="stitle">Case Study A vs Case Study B</div>
+        <div class="ssub">Same framework. Different depth.</div>
+        <div class="aline"></div>
+        <div class="cards c2"><div class="card" >
+              <div class="cico">🧩</div>
+              <div class="ctit">Case Study A — integration-heavy</div>
+              <div class="cbod">Event-driven workflow, backend pipeline mattered, UI could not explain all failures. Deeper integration harness justified.</div>
+            </div><div class="card" >
+              <div class="cico">🖥️</div>
+              <div class="ctit">Case Study B — browser-first</div>
+              <div class="cbod">Standard web flow, browser behaviour mattered more, API checks still needed for confidence, full backend harness not justified.</div>
+            </div></div><div class="ibox" style="margin-top:12px;"><strong>Main point:</strong> the framework is reusable. The implementation depth changes. That is a feature, not a contradiction.</div>
+      </div>
+    </div><div class="slide" data-label="Coverage Taxonomy">
+      <div class="hdr"><div class="brand"><div class="blogo">BSC</div><div class="btxt"><span>Transaction Science</span> · BSC Global</div></div><div class="snum"></div></div>
+      <div class="sbody">
+        <div class="stitle">4-State Coverage Taxonomy</div>
+        <div class="ssub">“Not tested” is too vague to be useful.</div>
+        <div class="aline"></div>
+        <table class="ft"><thead><tr><th>State</th><th>Meaning</th><th>Action</th></tr></thead><tbody><tr><td>Covered</td><td>Automated and passing</td><td>Maintain</td></tr><tr><td>Partial</td><td>Some covered, gaps remain</td><td>Finish or explicitly accept</td></tr><tr><td>Pending</td><td>Can be automated here, not yet built</td><td>Estimate and schedule</td></tr><tr><td>Out of Scope</td><td>Cannot run in this environment</td><td>Document and revisit only if constraints change</td></tr></tbody></table><div class="wbox" style="margin-top:12px;"><strong>Most important distinction:</strong> Pending is backlog. Out of Scope is an environment or dependency constraint. They are not the same thing.</div>
+      </div>
+    </div><div class="slide" data-label="Coverage Map">
+      <div class="hdr"><div class="brand"><div class="blogo">BSC</div><div class="btxt"><span>Transaction Science</span> · BSC Global</div></div><div class="snum"></div></div>
+      <div class="sbody">
+        <div class="stitle">Coverage Map Template</div>
+        <div class="ssub">A reusable artefact for making coverage visible, honest, and maintainable.</div>
+        <div class="aline"></div>
+        <div class="tcol"><div><table class="ft"><thead><tr><th>Case ID</th><th>Area / Page</th><th>Behaviour</th><th>Layer</th><th>State</th><th>Owner</th><th>Work Item</th><th>Notes</th></tr></thead><tbody><tr><td>TC-AUTH-001</td><td>Login</td><td>User can sign in with valid credentials</td><td>E2E</td><td><span style="color:var(--green);">Covered</span></td><td>QA</td><td>#1234</td><td>Desktop flow</td></tr><tr><td>TC-API-002</td><td>Account API</td><td>Profile update persists to DB</td><td>Integration</td><td><span style="color:var(--amber);">Pending</span></td><td>QA</td><td>#1235</td><td>Needs seed data</td></tr><tr><td>TC-SEC-003</td><td>Password reset</td><td>Expired token rejected</td><td>Integration</td><td><span style="color:var(--teal);">Partial</span></td><td>QA</td><td>#1236</td><td>Happy path covered</td></tr></tbody></table></div><div><table class="ft"><thead><tr><th>State</th><th>Count</th><th>%</th></tr></thead><tbody><tr><td>Covered</td><td>24</td><td>48%</td></tr><tr><td>Partial</td><td>8</td><td>16%</td></tr><tr><td>Pending</td><td>14</td><td>28%</td></tr><tr><td>Out of Scope</td><td>4</td><td>Reported separately</td></tr></tbody></table><div style="height:10px"></div><table class="ft"><thead><tr><th>Theme</th><th>Pattern proven once on…</th><th>Layer</th><th># Pending</th><th>Status</th></tr></thead><tbody><tr><td>Input hardening</td><td>Login form</td><td>E2E</td><td>6</td><td>In progress</td></tr><tr><td>Error / empty states</td><td>Dashboard</td><td>E2E</td><td>4</td><td>Pending</td></tr><tr><td>Contract freeze</td><td>Account API</td><td>Integration</td><td>3</td><td>Planned</td></tr></tbody></table></div></div><div class="ibox" style="margin-top:12px;"><strong>Workshop prompt:</strong> Take one project area and sketch five coverage rows. That is usually enough to reveal whether the current conversation about coverage is real or performative.</div>
+      </div>
+    </div><div class="slide" data-label="QA Entry Points">
+      <div class="hdr"><div class="brand"><div class="blogo">BSC</div><div class="btxt"><span>Transaction Science</span> · BSC Global</div></div><div class="snum"></div></div>
+      <div class="sbody">
+        <div class="stitle">QA Entry Points</div>
+        <div class="ssub">This deck assumes QA works from the artefacts that already exist.</div>
+        <div class="aline"></div>
+        <div class="cards c3"><div class="card" >
+              <div class="cico">📄</div>
+              <div class="ctit">Wiki page</div>
+              <div class="cbod">A structured starting point if requirements are documented well enough to test from.</div>
+            </div><div class="card" >
+              <div class="cico">🎫</div>
+              <div class="ctit">Ticket</div>
+              <div class="cbod">A valid QA entry point when the work item contains enough scope and acceptance detail.</div>
+            </div><div class="card" >
+              <div class="cico">🔀</div>
+              <div class="ctit">PR stream / existing delivery</div>
+              <div class="cbod">On projects already in motion, the entry point may be the current delivery flow itself.</div>
+            </div></div><div class="gbox" style="margin-top:12px;"><strong>Important:</strong> this toolbox does not depend on broad organisational process change. It starts where the real project currently is.</div>
+      </div>
+    </div><div class="slide" data-label="Definition of Ready">
+      <div class="hdr"><div class="brand"><div class="blogo">BSC</div><div class="btxt"><span>Transaction Science</span> · BSC Global</div></div><div class="snum"></div></div>
+      <div class="sbody">
+        <div class="stitle">Definition of Ready</div>
+        <div class="ssub">The intake gate for both QA and AI-assisted workflows. Ticket-side readiness and QA enrichment are not the same thing.</div>
+        <div class="aline"></div>
+        <div class="tcol"><div><table class="ft"><thead><tr><th>Field</th><th>Priority</th><th>Why it matters</th></tr></thead><tbody><tr><td>Feature title</td><td>Must have</td><td>Defines the scope boundary</td></tr><tr><td>Where — page / screen / route / platform</td><td>Must have</td><td>AI and QA both need location</td></tr><tr><td>Relevant linked context</td><td>Must have</td><td>Gives QA and AI enough structured context to reason correctly without tribal knowledge</td></tr><tr><td>Acceptance criteria</td><td>Must have</td><td>Becomes test cases</td></tr><tr><td>Out of scope</td><td>Must have</td><td>Prevents over-generation and scope creep</td></tr><tr><td>Existing data behaviour</td><td>Should have</td><td>Protects backward compatibility</td></tr><tr><td>Negative paths</td><td>Should have</td><td>Improves edge-case quality</td></tr><tr><td>Design reference</td><td>Should have</td><td>Supports UI validation</td></tr><tr><td>Test data requirements</td><td>Should have</td><td>Improves repeatability and setup quality</td></tr></tbody></table></div><div><div class="gbox"><strong>Ticket-side DOR:</strong> authors provide the minimum structured context needed to understand the change.<br/><strong>QA intake enrichment:</strong> QA derives likely systems affected, likely test layers, likely automation route, and likely data needs.</div><div style="height:10px"></div><div class="ibox"><strong>Why this matters for Claude Code:</strong> vague requirements produce generic output, generic TCs, and weak PR review. Better input quality is the cheapest way to improve AI usefulness.</div></div></div>
+      </div>
+    </div><div class="slide" data-label="Weak vs Ready">
+      <div class="hdr"><div class="brand"><div class="blogo">BSC</div><div class="btxt"><span>Transaction Science</span> · BSC Global</div></div><div class="snum"></div></div>
+      <div class="sbody">
+        <div class="stitle">Weak vs Ready Requirement Example</div>
+        <div class="ssub">A developer with context can infer. Claude Code cannot. A QA engineer joining later cannot either. Acceptance criteria anchor test design — they do not replace QA's smart testing.</div>
+        <div class="aline"></div>
+        <div class="tcol"><div><div class="rbox"><strong>Weak</strong><br/><br/>“Remove the referral code field.”<br/><br/>Not enough to update automation, generate useful TCs, or review a PR against expected outcomes.</div></div><div><div class="gbox"><strong>Ready</strong><br/><br/>Specifies where the change lives, what layers it touches, what the observable outcomes are, how existing data behaves, and at least one meaningful negative path.</div></div></div>
+      </div>
+    </div><div class="slide" data-label="DOR Comment Template">
+      <div class="hdr"><div class="brand"><div class="blogo">BSC</div><div class="btxt"><span>Transaction Science</span> · BSC Global</div></div><div class="snum"></div></div>
+      <div class="sbody">
+        <div class="stitle">DOR Ticket Comment Template</div>
+        <div class="ssub">A reusable intake response when a ticket is not ready to test from.</div>
+        <div class="aline"></div>
+        <div class="code"><pre>Definition of Ready — please complete before sprint pull
+
+• Where: page/screen + URL path + platform(s)
+• Scope: UI only? API contract? DB? Analytics? CRM mapping?
+• Acceptance criteria (Given/When/Then)
+• Existing data: behaviour for records/accounts already holding the field/value
+• Adjacent UI: layout, validation, tab order, button enable state
+• Negative paths: deep links, query params, role variants, partial sessions
+• Design reference: Figma or before/after screenshot
+• Out of scope: explicit list
+• Test data requirements: role / account state / seed data</pre></div><div class="ibox" style="margin-top:12px;"><strong>Workshop prompt:</strong> Take a real ticket and run this comment against it. If it feels too long, the ticket is usually under-specified.</div>
+      </div>
+    </div><div class="slide" data-label="QA PR Change Assessment">
+      <div class="hdr"><div class="brand"><div class="blogo">BSC</div><div class="btxt"><span>Transaction Science</span> · BSC Global</div></div><div class="snum"></div></div>
+      <div class="sbody">
+        <div class="stitle">QA PR Change Assessment</div>
+        <div class="ssub">Use AI, MCP, and PR artefacts to understand what changed before waiting for full deployment-level testing.</div>
+        <div class="aline"></div>
+        <div class="tcol"><div><div class="ctitle">What it does</div><div class="chk">
+          <div class="chi"><div class="chico">✅</div><div class="chtxt">Reads PR artefacts through MCP</div></div>
+          <div class="chi"><div class="chico">✅</div><div class="chtxt">Compares changes against linked requirement context</div></div>
+          <div class="chi"><div class="chico">✅</div><div class="chtxt">Checks consistency against QA test understanding</div></div>
+          <div class="chi"><div class="chico">✅</div><div class="chtxt">Flags likely functional mismatches and automation impact</div></div>
+          <div class="chi"><div class="chico">✅</div><div class="chtxt">Gives QA an earlier signal before full execution</div></div>
+        </div></div><div><div class="ctitle">What it does not do</div><div class="chk">
+          <div class="chi"><div class="chico">❌</div><div class="chtxt">Replace developer code review</div></div>
+          <div class="chi"><div class="chico">❌</div><div class="chtxt">Judge code style or syntax</div></div>
+          <div class="chi"><div class="chico">❌</div><div class="chtxt">Act as a developer merge gate</div></div>
+          <div class="chi"><div class="chico">❌</div><div class="chtxt">Approve or reject the PR</div></div>
+          <div class="chi"><div class="chico">❌</div><div class="chtxt">Replace proper QA execution</div></div>
+        </div></div></div>
+        <div class="gbox" style="margin-top:12px;"><strong>The goal is not to review code like a developer. The goal is to review change like QA.</strong></div>
+      </div>
+    </div><div class="slide" data-label="Bootstrap Checklist">
+      <div class="hdr"><div class="brand"><div class="blogo">BSC</div><div class="btxt"><span>Transaction Science</span> · BSC Global</div></div><div class="snum"></div></div>
+      <div class="sbody">
+        <div class="stitle">Day-One Bootstrap Checklist</div>
+        <div class="ssub">Scaffold first. Prove one slice. Scale second.</div>
+        <div class="aline"></div>
+        <div class="chk"><div class="chi"><div class="chico">1️⃣</div><div class="chtxt"><strong>Decide real / emulated / stubbed</strong> for every major component</div></div><div class="chi"><div class="chico">2️⃣</div><div class="chtxt"><strong>Create scaffold folders</strong> — page objects, support layer, or fixtures / builders</div></div><div class="chi"><div class="chico">3️⃣</div><div class="chtxt"><strong>Add base readiness policy</strong> — no ad hoc waits</div></div><div class="chi"><div class="chico">4️⃣</div><div class="chtxt"><strong>Add route constants</strong> — zero raw URLs in tests</div></div><div class="chi"><div class="chico">5️⃣</div><div class="chtxt"><strong>Add one builder</strong> for the primary entity under test</div></div><div class="chi"><div class="chico">6️⃣</div><div class="chtxt"><strong>Add isolation and cleanup</strong> helper or fixture</div></div><div class="chi"><div class="chico">7️⃣</div><div class="chtxt"><strong>Configure realistic timeouts and artefacts</strong></div></div><div class="chi"><div class="chico">8️⃣</div><div class="chtxt"><strong>Add speed tags</strong> — fast / slow or equivalent</div></div><div class="chi"><div class="chico">9️⃣</div><div class="chtxt"><strong>Get one thin slice green</strong> before scaling</div></div></div><div class="gbox" style="margin-top:12px;"><strong>Heuristic:</strong> if a new test takes 30 lines of setup, the scaffold needs work — not the engineer.</div>
+      </div>
+    </div><div class="slide" data-label="Starter Scaffold">
+      <div class="hdr"><div class="brand"><div class="blogo">BSC</div><div class="btxt"><span>Transaction Science</span> · BSC Global</div></div><div class="snum"></div></div>
+      <div class="sbody">
+        <div class="stitle">Starter Scaffold Structure</div>
+        <div class="ssub">The structure is reusable. The project-specific content inside it is not.</div>
+        <div class="aline"></div>
+        <div class="tcol"><div><div class="ctitle">Browser Automation</div><div class="code"><pre>e2e/
+├── page-objects/
+│   ├── base-page.*
+│   ├── landing-page.*
+│   └── &lt;feature&gt;-page.*
+├── support/
+│   ├── routes.*
+│   ├── builders/
+│   ├── fixtures/
+│   ├── mock-api/
+│   └── scenario-builders.*
+├── specs/
+└── config.*</pre></div></div><div><div class="ctitle">Integration Harness</div><div class="code"><pre>integration-tests/
+├── fixtures/
+│   ├── api-fixture.*
+│   ├── pipeline-fixture.*
+│   └── full-fixture.*
+├── base/
+├── builders/
+├── seeding/
+├── stubs/
+└── &lt;area&gt;/</pre></div></div></div><div class="wbox" style="margin-top:12px;"><strong>Rule:</strong> full-stack is the exception, not the default. Use the lightest fixture that honestly proves the behaviour.</div>
+      </div>
+    </div><div class="slide" data-label="Patterns That Help">
+      <div class="hdr"><div class="brand"><div class="blogo">BSC</div><div class="btxt"><span>Transaction Science</span> · BSC Global</div></div><div class="snum"></div></div>
+      <div class="sbody">
+        <div class="stitle">Coding Patterns That Help QA and Claude</div>
+        <div class="ssub">Consistency helps humans review faster and helps Claude Code be less chaotic.</div>
+        <div class="aline"></div>
+        <div class="chk"><div class="chi"><div class="chico">✅</div><div class="chtxt"><strong>Page Object Model</strong> — tests do not talk to selectors directly</div></div><div class="chi"><div class="chico">✅</div><div class="chtxt"><strong>Builder pattern</strong> — <code>A.Thing().ThatIsValid().With(...)</code></div></div><div class="chi"><div class="chico">✅</div><div class="chtxt"><strong>Arrange / Act / Assert</strong> — consistent test structure</div></div><div class="chi"><div class="chico">✅</div><div class="chtxt"><strong>Auth persistence</strong> — login once, reuse session state</div></div><div class="chi"><div class="chico">✅</div><div class="chtxt"><strong><code>waitForReady()</code></strong> — semantic readiness, not random waiting</div></div><div class="chi"><div class="chico">✅</div><div class="chtxt"><strong><code>data-testid</code></strong> — stable locator hook</div></div><div class="chi"><div class="chico">✅</div><div class="chtxt"><strong>Cleanup in <code>finally</code></strong> — no shared state surprises</div></div></div><div class="ibox" style="margin-top:12px;"><strong>Dry truth:</strong> Claude is helpful, but alarmingly literal. Predictable structure improves output quality fast.</div>
+      </div>
+    </div><div class="slide" data-label="Claude Setup">
+      <div class="hdr"><div class="brand"><div class="blogo">BSC</div><div class="btxt"><span>Transaction Science</span> · BSC Global</div></div><div class="snum"></div></div>
+      <div class="sbody">
+        <div class="stitle">Claude Project Setup for QA</div>
+        <div class="ssub">This is not “how Claude works.” It is how to set a project up so Claude is useful instead of noisy. AI is a multiplier of the patterns already present in the repo.</div>
+        <div class="aline"></div>
+        <div class="tcol"><div><ul class="bl"><li><span class="dot" style="background:var(--a2)"></span><div><strong>Clear folder structure</strong> — predictable places for tests, builders, fixtures, routes</div></li><li><span class="dot" style="background:var(--a2)"></span><div><strong>Strong DOR</strong> — better ticket input produces better AI output</div></li><li><span class="dot" style="background:var(--a2)"></span><div><strong>Stable naming</strong> — route names, fixture names, builder names, case IDs</div></li><li><span class="dot" style="background:var(--a2)"></span><div><strong>Explicit acceptance criteria</strong> — so PR review can anchor to outcomes</div></li><li><span class="dot" style="background:var(--a2)"></span><div><strong>MCP access</strong> — so Claude can read work items, relations, and PR changes</div></li></ul></div><div><div class="chk"><div class="chi"><div class="chico">📁</div><div class="chtxt"><strong>.claude/rules</strong> — repo-level QA expectations</div></div><div class="chi"><div class="chico">🧠</div><div class="chtxt"><strong>.claude/skills</strong> — reusable ways of working or playbooks</div></div><div class="chi"><div class="chico">🪝</div><div class="chtxt"><strong>.claude/hooks</strong> — automation around repo events where useful</div></div><div class="chi"><div class="chico">📘</div><div class="chtxt"><strong>CLAUDE.md</strong> — project-specific orientation for Claude Code</div></div></div></div></div><div class="ibox" style="margin-top:12px;"><strong>Practical rule:</strong> Good examples accelerate bootstrap. Inconsistent structure gets copied too.</div><div class="gbox" style="margin-top:10px;"><strong>Workshop prompt:</strong> If Claude Code entered your repo today, what would confuse it first — requirements, structure, naming, or missing access?</div>
+      </div>
+    </div><div class="slide" data-label="MCP for QA">
+      <div class="hdr"><div class="brand"><div class="blogo">BSC</div><div class="btxt"><span>Transaction Science</span> · BSC Global</div></div><div class="snum"></div></div>
+      <div class="sbody">
+        <div class="stitle">MCP for QA</div>
+        <div class="ssub">MCP is what makes Claude useful against real delivery artefacts instead of guessing from code alone.</div>
+        <div class="aline"></div>
+        <div class="tcol"><div><table class="ft"><thead><tr><th>Use when…</th><th>Recommendation</th></tr></thead><tbody><tr><td>Tool is project-specific</td><td>Project <code>.mcp.json</code></td></tr><tr><td>Tool should work across projects</td><td>Standalone HTTP MCP</td></tr><tr><td>Best long-term setup</td><td>Use both — local + shared</td></tr></tbody></table></div><div><ul class="bl"><li><span class="dot" style="background:var(--a2)"></span><div><strong>Work item detail</strong> — read the ticket body and AC</div></li><li><span class="dot" style="background:var(--a2)"></span><div><strong>Work item relations</strong> — find implementing PRs and linked items</div></li><li><span class="dot" style="background:var(--a2)"></span><div><strong>PR changes</strong> — compare code change against requirement intent</div></li><li><span class="dot" style="background:var(--a2)"></span><div><strong>Bug create / update</strong> — feed structured failures into Azure DevOps</div></li><li><span class="dot" style="background:var(--a2)"></span><div><strong>Cross-project reuse</strong> — QA does not need to rebuild the same access pattern every time</div></li></ul></div></div>
+      </div>
+    </div><div class="slide" data-label="Language Choice">
+      <div class="hdr"><div class="brand"><div class="blogo">BSC</div><div class="btxt"><span>Transaction Science</span> · BSC Global</div></div><div class="snum"></div></div>
+      <div class="sbody">
+        <div class="stitle">Language & Framework Choice</div>
+        <div class="ssub">Pick the language and framework that prove the layer best — and align with the engineering environment where practical.</div>
+        <div class="aline"></div>
+        <table class="ft"><thead><tr><th>Situation</th><th>Recommendation</th><th>Why</th></tr></thead><tbody><tr><td>Most new web projects</td><td>TypeScript + Playwright</td><td>Simpler setup, strongest documentation, easiest to align with public examples</td></tr><tr><td>.NET / backend-integration-heavy</td><td>C# + xUnit</td><td>Aligns with backend stack, good fit for integration-heavy testing</td></tr><tr><td>Backend + browser both matter</td><td>Use both</td><td>Match the layer to the stack that proves it best</td></tr></tbody></table><div class="ibox" style="margin-top:12px;"><strong>Practical rule:</strong> if Dev may need to review or help investigate, alignment with the broader engineering stack is usually an advantage, not a constraint.</div>
+      </div>
+    </div><div class="slide" data-label="Stability Checklist">
+      <div class="hdr"><div class="brand"><div class="blogo">BSC</div><div class="btxt"><span>Transaction Science</span> · BSC Global</div></div><div class="snum"></div></div>
+      <div class="sbody">
+        <div class="stitle">Stability & Anti-Flake Checklist</div>
+        <div class="ssub">A stable suite is a usable suite.</div>
+        <div class="aline"></div>
+        <div class="cards c2"><div class="card" >
+              <div class="cico">⏱️</div>
+              <div class="ctit">Timing & readiness</div>
+              <div class="cbod"><ul><li>no sleeps</li><li>no network-idle</li><li>semantic readiness only</li><li>realistic timeouts</li></ul></div>
+            </div><div class="card" >
+              <div class="cico">🔒</div>
+              <div class="ctit">Isolation</div>
+              <div class="cbod"><ul><li>unique IDs</li><li>no shared mutable state</li><li>cleanup in finally</li><li>parallel only when honest</li></ul></div>
+            </div><div class="card" >
+              <div class="cico">🎯</div>
+              <div class="ctit">Assertions & locators</div>
+              <div class="cbod"><ul><li>prove persisted outcomes</li><li>not just transient UI</li><li>scoped role/name or data-testid</li><li>no brittle selectors</li></ul></div>
+            </div><div class="card" >
+              <div class="cico">🧪</div>
+              <div class="ctit">Environment honesty</div>
+              <div class="cbod"><ul><li>do not mislabel smoke as deterministic coverage</li><li>warm the environment before judging failures</li><li>real third-party seams belong in thin smoke lanes</li></ul></div>
+            </div></div>
+      </div>
+    </div><div class="slide" data-label="Flake Triage">
+      <div class="hdr"><div class="brand"><div class="blogo">BSC</div><div class="btxt"><span>Transaction Science</span> · BSC Global</div></div><div class="snum"></div></div>
+      <div class="sbody">
+        <div class="stitle">Flake Triage Sequence</div>
+        <div class="ssub">When a test fails intermittently, check in this order.</div>
+        <div class="aline"></div>
+        <div class="chk"><div class="chi"><div class="chico">1️⃣</div><div class="chtxt"><strong>Timing</strong> — readiness, cold starts, asynchronous settle time</div></div><div class="chi"><div class="chico">2️⃣</div><div class="chtxt"><strong>Isolation</strong> — shared state, reused data, cross-test contamination</div></div><div class="chi"><div class="chico">3️⃣</div><div class="chtxt"><strong>Assertion type</strong> — proving something too transient or indirect</div></div><div class="chi"><div class="chico">4️⃣</div><div class="chtxt"><strong>Locator ambiguity</strong> — wrong region, reused label, unstable selector</div></div><div class="chi"><div class="chico">5️⃣</div><div class="chtxt"><strong>Environment</strong> — broken emulator, unhealthy dependency, config drift</div></div></div><div class="wbox" style="margin-top:12px;"><strong>Rule:</strong> quarantine confirmed flakes, fix root cause, and do not extend sleep and call it stability.</div>
+      </div>
+    </div><div class="slide" data-label="Speed Tiering">
+      <div class="hdr"><div class="brand"><div class="blogo">BSC</div><div class="btxt"><span>Transaction Science</span> · BSC Global</div></div><div class="snum"></div></div>
+      <div class="sbody">
+        <div class="stitle">Speed Tiering</div>
+        <div class="ssub">Not every test belongs in every run.</div>
+        <div class="aline"></div>
+        <table class="ft"><thead><tr><th>Tier</th><th>Purpose</th><th>Typical use</th></tr></thead><tbody><tr><td>fast</td><td>Developer / QA inner loop</td><td>Local validation</td></tr><tr><td>!slow</td><td>PR checks</td><td>Standard pipeline gate</td></tr><tr><td>full</td><td>Deliberate regression</td><td>Release confidence or scheduled run</td></tr></tbody></table><div class="gbox" style="margin-top:12px;"><strong>Point:</strong> a useful suite supports different feedback loops. A single undifferentiated lane becomes either too slow to use or too shallow to trust.</div>
+      </div>
+    </div><div class="slide" data-label="Layers vs Domains">
+      <div class="hdr"><div class="brand"><div class="blogo">BSC</div><div class="btxt"><span>Transaction Science</span> · BSC Global</div></div><div class="snum"></div></div>
+      <div class="sbody">
+        <div class="stitle">Test Layers vs Quality Domains</div>
+        <div class="ssub">Do not confuse how something is proven with what kind of risk is being evaluated.</div>
+        <div class="aline"></div>
+        <div class="tcol"><div><table class="ft"><thead><tr><th>Test Layers</th><th>Meaning</th></tr></thead><tbody>
+          <tr><td>Unit</td><td>How pure logic is proven</td></tr>
+          <tr><td>Integration</td><td>How seams, contracts, persistence, and state are proven</td></tr>
+          <tr><td>E2E</td><td>How visible user behaviour is proven</td></tr>
+          <tr><td>Smoke</td><td>How narrow reachability / sanity checks are proven</td></tr>
+        </tbody></table></div><div><table class="ft"><thead><tr><th>Quality Domains</th><th>Meaning</th></tr></thead><tbody>
+          <tr><td>Functional</td><td>Correctness of behaviour</td></tr>
+          <tr><td>Performance</td><td>Responsiveness and efficiency</td></tr>
+          <tr><td>Load / Scalability</td><td>Behaviour under traffic or demand</td></tr>
+          <tr><td>Accessibility</td><td>Usability for broader user needs</td></tr>
+          <tr><td>Reliability / Resilience</td><td>Recovery, robustness, and fault behaviour</td></tr>
+          <tr><td>Security</td><td>Protection against misuse or exposure</td></tr>
+        </tbody></table></div></div>
+        <div class="ibox" style="margin-top:12px;"><strong>Key distinction:</strong> test layers describe how behaviour is proven. Quality domains describe what kind of risk is being evaluated.</div>
+      </div>
+    </div><div class="slide" data-label="Reuse vs Adapt">
+      <div class="hdr"><div class="brand"><div class="blogo">BSC</div><div class="btxt"><span>Transaction Science</span> · BSC Global</div></div><div class="snum"></div></div>
+      <div class="sbody">
+        <div class="stitle">Case Study A / B — What Reused, What Changed</div>
+        <div class="ssub">The framework stays. The implementation depth changes.</div>
+        <div class="aline"></div>
+        <div class="tcol"><div><div class="chk"><div class="chi"><div class="chico">A</div><div class="chtxt"><strong>Case Study A reused:</strong> trust boundaries, harness profiles, integration-first thinking, bug logging approach</div></div><div class="chi"><div class="chico">A</div><div class="chtxt"><strong>Case Study A adapted:</strong> deeper integration coverage, emulators, event and persistence validation</div></div></div></div><div><div class="chk"><div class="chi"><div class="chico">B</div><div class="chtxt"><strong>Case Study B reused:</strong> DOR, decision framework, coverage map, Playwright + Claude flow, bug logging</div></div><div class="chi"><div class="chico">B</div><div class="chtxt"><strong>Case Study B adapted:</strong> lighter integration depth, stronger browser emphasis, fewer infrastructure concerns</div></div></div></div></div>
+      </div>
+    </div><div class="slide" data-label="Future Quality Domains">
+      <div class="hdr"><div class="brand"><div class="blogo">BSC</div><div class="btxt"><span>Transaction Science</span> · BSC Global</div></div><div class="snum"></div></div>
+      <div class="sbody">
+        <div class="stitle">Future QA Quality Domains</div>
+        <div class="ssub">This toolbox is functional-first, but it is intentionally extensible into broader quality engineering domains.</div>
+        <div class="aline"></div>
+        <table class="ft"><thead><tr><th>Domain</th><th>Current status</th><th>Likely QA role</th><th>Notes</th></tr></thead><tbody>
+          <tr><td>Functional</td><td>Active now</td><td>QA-led</td><td>Main focus of current toolbox</td></tr>
+          <tr><td>Performance</td><td>Future</td><td>Potential QA-led</td><td>Needs tooling, baselines, environments</td></tr>
+          <tr><td>Load / Scalability</td><td>Future</td><td>Shared / QA-influenced</td><td>Depends on architecture and deployment model</td></tr>
+          <tr><td>Accessibility</td><td>Future</td><td>QA-led or shared</td><td>Good candidate for integration into existing flow</td></tr>
+          <tr><td>Reliability / Resilience</td><td>Future</td><td>Shared</td><td>Often depends on platform and service architecture</td></tr>
+          <tr><td>Security</td><td>Future</td><td>Shared / specialist-led</td><td>QA may support, not always own</td></tr>
+        </tbody></table>
+      </div>
+    </div><div class="slide" data-label="Final Working Model">
+      <div class="hdr"><div class="brand"><div class="blogo">BSC</div><div class="btxt"><span>Transaction Science</span> · BSC Global</div></div><div class="snum"></div></div>
+      <div class="sbody">
+        <div class="stitle">Final QA Working Model</div>
+        <div class="ssub">The goal is not to automate everything. The goal is to automate the right things, at the right layer, early enough to matter.</div>
+        <div class="aline"></div>
+        <div class="cards c2"><div class="card" >
+              <div class="cico">📍</div>
+              <div class="ctit">If assigned to a project</div>
+              <div class="cbod"><ul><li>run trust boundary classification</li><li>apply DOR</li><li>create coverage map</li><li>choose first useful quality gate</li><li>scaffold before scaling</li></ul></div>
+            </div><div class="card" >
+              <div class="cico">🧰</div>
+              <div class="ctit">If not yet assigned</div>
+              <div class="cbod"><ul><li>keep templates ready</li><li>prepare scaffold defaults</li><li>know your tool stack</li><li>know your entry-point questions</li><li>adapt, do not blindly copy</li></ul></div>
+            </div></div><div class="ibox" style="margin-top:12px;"><strong>Maturity rule:</strong> each escaped defect should trigger a decision — should this now be protected by automation, and at which layer?</div><div class="gbox" style="margin-top:10px;"><strong>Outcome:</strong> a QA engineer should be able to pick up this deck, look at a project, and know how to start removing manual effort in a structured way.</div>
+      </div>
+    </div><div class="slide" data-label="Appendix Intro">
+      <div class="hdr"><div class="brand"><div class="blogo">BSC</div><div class="btxt"><span>Transaction Science</span> · BSC Global</div></div><div class="snum"></div></div>
+      <div class="sbody">
+        <div class="stitle">Appendix — Copy/Paste Templates</div>
+        <div class="ssub">These are working references. Copy them, adapt them, and remove what your project does not need.</div>
+        <div class="aline"></div>
+        <div class="cards c2"><div class="card" >
+              <div class="cico">📋</div>
+              <div class="ctit">Included here</div>
+              <div class="cbod"><ul><li>Trust boundary template</li><li>Decision log template</li><li>Coverage map template</li><li>DOR comment template</li></ul></div>
+            </div><div class="card" >
+              <div class="cico">🧭</div>
+              <div class="ctit">How to use them</div>
+              <div class="cbod"><ul><li>Do not copy blindly</li><li>Fill them with project-specific answers</li><li>Keep the structure reusable</li><li>Update the toolbox as you learn</li></ul></div>
+            </div></div>
+      </div>
+    </div><div class="slide" data-label="Template: Trust Boundaries">
+      <div class="hdr"><div class="brand"><div class="blogo">BSC</div><div class="btxt"><span>Transaction Science</span> · BSC Global</div></div><div class="snum"></div></div>
+      <div class="sbody">
+        <div class="stitle">Copy/Paste — Trust Boundary Template</div>
+        <div class="ssub">The template stays the same; the component list changes per project.</div>
+        <div class="aline"></div>
+        <div class="code"><pre>| Component | Classification | Reason |
+|---|---|---|
+| Frontend / UI | Real | Owned and shipped by the team |
+| API / Services | Real | Owned and shipped by the team |
+| Database / Queue / Storage | Emulated | Can be run locally via container or emulator |
+| External Provider | Stubbed | Third-party dependency; non-deterministic live calls |</pre></div>
+      </div>
+    </div><div class="slide" data-label="Template: Decision Log">
+      <div class="hdr"><div class="brand"><div class="blogo">BSC</div><div class="btxt"><span>Transaction Science</span> · BSC Global</div></div><div class="snum"></div></div>
+      <div class="sbody">
+        <div class="stitle">Copy/Paste — Test Type Decision Log</div>
+        <div class="ssub">Use this when deciding where a test belongs and why.</div>
+        <div class="aline"></div>
+        <div class="code"><pre>| Case ID | Behaviour | Layer chosen | Why this layer / why not lower |
+|---|---|---|---|
+| TC-XXX-001 | | | |
+| TC-XXX-002 | | | |
+| TC-XXX-003 | | | |</pre></div>
+      </div>
+    </div><div class="slide" data-label="Template: Coverage Map">
+      <div class="hdr"><div class="brand"><div class="blogo">BSC</div><div class="btxt"><span>Transaction Science</span> · BSC Global</div></div><div class="snum"></div></div>
+      <div class="sbody">
+        <div class="stitle">Copy/Paste — Coverage Map Template</div>
+        <div class="ssub">Use this to make coverage visible and honest from the start.</div>
+        <div class="aline"></div>
+        <div class="code"><pre>| Case ID | Area / Page | Behaviour | Layer | State | Owner | Work Item | Notes |
+|---|---|---|---|---|---|---|---|
+| TC-XXX-001 | | | | Covered / Partial / Pending / Out of Scope | | | |
+| TC-XXX-002 | | | | Covered / Partial / Pending / Out of Scope | | | |
+| TC-XXX-003 | | | | Covered / Partial / Pending / Out of Scope | | | |</pre></div>
+      </div>
+    </div><div class="slide" data-label="Template: DOR Comment">
+      <div class="hdr"><div class="brand"><div class="blogo">BSC</div><div class="btxt"><span>Transaction Science</span> · BSC Global</div></div><div class="snum"></div></div>
+      <div class="sbody">
+        <div class="stitle">Copy/Paste — DOR Comment Template</div>
+        <div class="ssub">Use this when a ticket is not ready to test from.</div>
+        <div class="aline"></div>
+        <div class="code"><pre>Definition of Ready — please complete before sprint pull
+
+• Where: page/screen + URL path + platform(s)
+• Scope: UI only? API contract? DB? Analytics? CRM mapping?
+• Acceptance criteria (Given/When/Then)
+• Existing data: behaviour for records/accounts already holding the field/value
+• Adjacent UI: layout, validation, tab order, button enable state
+• Negative paths: deep links, query params, role variants, partial sessions
+• Design reference: Figma or before/after screenshot
+• Out of scope: explicit list
+• Test data requirements: role / account state / seed data</pre></div>
+      </div>
+    </div></div>
+<div class="nav"><button class="nbtn" id="prevBtn" onclick="navigate(-1)" disabled>&#8592;</button><div class="ndots" id="ndots"></div><button class="nbtn" id="nextBtn" onclick="navigate(1)">&#8594;</button></div>
+<div class="kh"><kbd>←</kbd> <kbd>→</kbd></div>
+<script>
+const slides=document.querySelectorAll('.slide');
+const dotsEl=document.getElementById('ndots');
+const prog=document.getElementById('prog');
+let cur=0;
+slides.forEach((s,i)=>{
+  const d=document.createElement('div');
+  d.className='ndot'+(i===0?' active':'');
+  d.title=s.dataset.label||'';
+  d.onclick=()=>goTo(i);
+  dotsEl.appendChild(d);
+  const sn=s.querySelector('.snum');
+  if(sn) sn.textContent=(i+1)+' / '+slides.length;
+});
+function goTo(n){
+  slides[cur].classList.remove('active');
+  document.querySelectorAll('.ndot')[cur].classList.remove('active');
+  cur=Math.max(0,Math.min(n,slides.length-1));
+  slides[cur].classList.add('active');
+  document.querySelectorAll('.ndot')[cur].classList.add('active');
+  document.getElementById('prevBtn').disabled=cur===0;
+  document.getElementById('nextBtn').disabled=cur===slides.length-1;
+  prog.style.width=((cur+1)/slides.length*100)+'%';
+}
+function navigate(d){goTo(cur+d);}
+document.addEventListener('keydown',e=>{
+  if(e.key==='ArrowRight'||e.key==='ArrowDown') navigate(1);
+  if(e.key==='ArrowLeft'||e.key==='ArrowUp') navigate(-1);
+});
+slides[0].classList.add('active');
+prog.style.width=(1/slides.length*100)+'%';
+</script>
+</body>
+</html>
